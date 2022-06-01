@@ -6,6 +6,8 @@ name: Java CI with Maven
 # Eventos
 on:
   push:
+    paths-ignore:
+      - '*.md'
     branches:
       - main
       - dev
