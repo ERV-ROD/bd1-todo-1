@@ -78,24 +78,23 @@ begin
             
             if session_diff <= session_ttl_param then
 				-- select "Cliente existe | sesion existe | sesion activa";
-                select clientId,SessionId,createdat, if(minute(timediff(utc_timestamp(),createdat)) <= session_ttl_param, "ACTIVE","INACTIVE") as sessionStatus from sessions where clientId = client_id_param;
+                select clientId,SessionId,createdat, if(timestampdiff(minute, createdat, utc_timestamp()) <= 30, "ACTIVE", "INACTIVE") as sessionStatus from sessions where clientId = client_id_param;
 			else
 				-- select "Cliente existe | sesion existe | sesion inactiva";
 				start transaction;
 					update sessions set createdat = utc_timestamp() where clientId = client_id_param;
 				commit;
-                select clientId,SessionId,createdat, if(minute(timediff(utc_timestamp(),createdat)) <= session_ttl_param, "ACTIVE","INACTIVE") as sessionStatus from sessions where clientId = client_id_param;
+                select clientId,SessionId,createdat, if(timestampdiff(minute, createdat, utc_timestamp()) <= 30, "ACTIVE", "INACTIVE") as sessionStatus from sessions where clientId = client_id_param;
             end if;
 		else
 			-- select "Cliente existe | sesion No existe";
             start transaction;
 				insert into sessions(clientId, sessionId, createdat) values(client_id_param,uuid(),utc_timestamp());
             commit;
-            select clientId,SessionId,createdat, if(minute(timediff(utc_timestamp(),createdat)) <= session_ttl_param, "ACTIVE","INACTIVE") as sessionStatus from sessions where clientId = client_id_param;
+            select clientId,SessionId,createdat, if(timestampdiff(minute, createdat, utc_timestamp()) <= 30, "ACTIVE", "INACTIVE") as sessionStatus from sessions where clientId = client_id_param;
         end if;
 	else
-		-- select "Cliente no existe";
-        select clientId,SessionId,createdat, if(minute(timediff(utc_timestamp(),createdat)) <= session_ttl_param, "ACTIVE","INACTIVE") as sessionStatus from sessions where clientId = client_id_param;
+        select "Cliente no existe";
 	end if;
     -- select clientId,SessionId,createdat, if(minute(timediff(utc_timestamp(),createdat)) <= 10, "ACTIVE","INACTIVE") as sessionStatus from sessions where clientId = client_id_param;
 end
@@ -131,10 +130,10 @@ begin
 		select minute(timediff(utc_timestamp(),createdat)) into session_diff from sessions where sessionId = session_id_param;
 		if session_diff <= 30 then
 			-- select 'sesion existe | sesion valida';
-			select clientId,SessionId,createdat, if(minute(timediff(utc_timestamp(),createdat)) <= 30, "ACTIVE","INACTIVE") as sessionStatus from sessions where clientId = session_id_param;
+			select clientId,SessionId,createdat, if(timestampdiff(minute, createdat, utc_timestamp()) <= 30, "ACTIVE", "INACTIVE") as sessionStatus from sessions where sessionId = session_id_param;
 		else
 			-- select 'sesion existe | sesion invalida';
-			select clientId,SessionId,createdat, if(minute(timediff(utc_timestamp(),createdat)) <= 30, "ACTIVE","INACTIVE") as sessionStatus from sessions where clientId = session_id_param;
+			select clientId,SessionId,createdat, if(timestampdiff(minute, createdat, utc_timestamp()) <= 30, "ACTIVE", "INACTIVE") as sessionStatus from sessions where sessionId = session_id_param;
         end if;
     else
 		select 'sesion no existe';
@@ -145,6 +144,4 @@ delimiter ;
 
 call validate_session("session-1");
 
-
-
-
+select * from clients;

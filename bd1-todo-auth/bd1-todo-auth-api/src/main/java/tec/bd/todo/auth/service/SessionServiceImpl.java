@@ -25,10 +25,17 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public void addNewClient(ClientCredentials credentials) {
         // TODO: validar - clientId y el clientSecret minimo 5 caracteres max 50. Sino lanzar excepcion
-        // TODO: validar - el clientId ya existe en la BD? Lanzar excepcion
-        var newClient = this.clientRepository.save(credentials);
-        if(null == newClient) {
+        if(credentials.getClientId().length() <5 || credentials.getClientId().length() >50){
             throw new RuntimeException("No se pudo salvar cliente");
+        }
+        // TODO: validar - el clientId ya existe en la BD? Lanzar excepcion
+        if(this.clientRepository.findByClientId(credentials.getClientId()) == null){
+            var newClient = this.clientRepository.save(credentials);
+            if(null == newClient) {
+                throw new RuntimeException("No se pudo salvar cliente");
+            }
+        }else{
+            throw new RuntimeException("El cliente ya existe");
         }
     }
 
@@ -51,10 +58,12 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public Session newSession(ClientCredentials credentials) {
+
         var dbCredentials = clientRepository.findByClientId(credentials.getClientId());
         if(null == dbCredentials) {
             throw new CredentialsException("client secret not found");
         }
+
         if (!dbCredentials.getClientSecret().equals(credentials.getClientSecret())) {
             throw new CredentialsException("Client secret not equal");
         }
@@ -78,7 +87,6 @@ public class SessionServiceImpl implements SessionService {
         var sessionInDb = this.sessionRepository.findBySessionId(session);
         if(null == sessionInDb) {
             return new Session(session, SessionStatus.INACTIVE);
-
         }
 
         return sessionInDb;

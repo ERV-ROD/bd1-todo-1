@@ -1,0 +1,189 @@
+{
+	"info": {
+		"_postman_id": "982f8c02-0e66-4f0a-b051-4f05c1fba360",
+		"name": "Todo_social",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21209823"
+	},
+	"item": [
+		{
+			"name": "Acceder",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener promedio",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Agregar Rating",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-session-id",
+						"value": "7f5d78f4-ed9a-11ec-b810-54bf6430414a",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"createdAt\": \"2022-05-31T17:07:21+0000\",\r\n    \"rating\": \"3\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8082/ratings/todo-897",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ratings",
+						"todo-897"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar Rating",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-session-id",
+						"value": "3769610e-ecf7-11ec-b810-54bf6430414a",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8082/ratings/:todo-2",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"ratings",
+						":todo-2"
+					],
+					"variable": [
+						{
+							"key": "todo-2",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener Reviews",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-session-id",
+						"value": "7f5d78f4-ed9a-11ec-b810-54bf6430414a",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8082/reviews/todo-2",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"reviews",
+						"todo-2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Agregar Review",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-session-id",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reviewText\": \"me parece buena idea!\", \r\n    \"clientid\": \"client-12\",\r\n    \"createdAt\": \"2022-05-31T17:07:21+0000\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8082/reviews/todo-2",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"reviews",
+						"todo-2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar Review",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-session-id",
+						"value": "4c183c05-edaf-11ec-b810-54bf6430414a",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8082/reviews/todo-2",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"reviews",
+						"todo-2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actualizar Reviws",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/reviews/todo-2",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"reviews",
+						"todo-2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

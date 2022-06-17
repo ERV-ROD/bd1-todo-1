@@ -33,16 +33,26 @@ public class AuthApi {
         }, gson::toJson);
 
         post("/clients", (request, response) -> {
-            var credentials = gson.fromJson(request.body(), ClientCredentials.class);
-            sessionService.addNewClient(credentials);
-            return credentials;
+            try {
+                var credentials = gson.fromJson(request.body(), ClientCredentials.class);
+                sessionService.addNewClient(credentials);
+                return credentials;
+            }catch(SessionServiceImpl.CredentialsException e){
+                response.status(400);
+                return Map.of("Message", "El cliente ya existe");
+            }
         }, gson::toJson);
 
         delete("/clients/:client-id", (request, response) -> {
-            var clientId = request.params("client-id");
-            sessionService.deleteClient(clientId);
-            response.status(200);
-            return Map.of("Deleted", "OK");
+            try {
+                var clientId = request.params("client-id");
+                sessionService.deleteClient(clientId);
+                response.status(200);
+                return Map.of("Deleted", "OK");
+            }catch (Exception e){
+                response.status(404);
+                return Map.of("Mesage", "404 Not Found");
+            }
         }, gson::toJson);
 
         get("/sessions", (request, response) -> {
@@ -62,12 +72,14 @@ public class AuthApi {
         }, gson::toJson);
 
         get("/sessions/validate", (request, response) -> {
-            var sessionParam = request.queryParams("session");
-            if(null == sessionParam) {
+            try{
+                var sessionParam = request.queryParams("session");
+                response.status(200);
+                return sessionService.validateSession(sessionParam);
+            }catch(SessionServiceImpl.CredentialsException e){
                 response.status(400);
                 return Map.of("Message", "Bad Request");
             }
-            return sessionService.validateSession(sessionParam);
         }, gson::toJson);
     }
 }

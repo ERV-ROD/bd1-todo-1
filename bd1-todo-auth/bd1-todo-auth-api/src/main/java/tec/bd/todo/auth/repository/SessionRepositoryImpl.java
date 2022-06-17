@@ -14,11 +14,11 @@ import java.util.List;
 public class SessionRepositoryImpl extends BaseRepository<Session> implements SessionRepository {
 
 
-    private static String FIND_ALL_SESSION_QUERY = "select clientid,sessionid,createdat, if(minute(timediff(utc_timestamp(), createdat)) <= 30, \"ACTIVE\", \"INACTIVE\" ) as sessionStatus from sessions order by createdat asc";
+    private static String FIND_ALL_SESSION_QUERY = "select clientid,sessionid,createdat, if(timestampdiff(minute, createdat, utc_timestamp()) <= 30, \"ACTIVE\", \"INACTIVE\" ) as sessionStatus from sessions order by createdat asc";
     // TODO: cambiar por procedimiento almacenado
     private static String FIND_BY_SESSION_QUERY = "{call validate_session(?)}";
     // TODO: cambiar por procedimiento almacenado
-    private static String SAVE_SESSION_QUERY = "insert into sessions(clientid, sessionid, createdat) values (?, ?, ?)";
+    private static String SAVE_SESSION_QUERY = "{call create_session(?,?)}";
     private static String UPDATE_SESSION_QUERY = "update sessions set sessionid = ?, createdat = ? where clientid = ?";
 
 
@@ -70,16 +70,15 @@ public class SessionRepositoryImpl extends BaseRepository<Session> implements Se
             var connection = this.connect();
             var statement = connection.prepareStatement(SAVE_SESSION_QUERY);
             statement.setString(1, session.getClientId());
-            statement.setString(2, session.getSessionId());
-            statement.setTimestamp(3, new Timestamp(session.getCreatedAt().getTime()));
+            statement.setString(2, "30");
 
-            var actual = this.execute(statement);
+            var resultSet = this.query(statement);
 
-            // Si la session se actualizó exitosamente entonces se pone el estatus
-
-            session.setStatus(SessionStatus.ACTIVE);
-
-            return session;
+            while(resultSet.next()) {
+                var newSession = toEntity(resultSet);
+                return newSession;
+            }
+            return null;
 
         } catch (SQLException e) {
             e.printStackTrace();
